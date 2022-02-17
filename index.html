@@ -141,6 +141,7 @@
         addmsg("/nick [name] - change name", "gray")
         addmsg("/me [message] - send action message", "gray")
         addmsg("/join [room] - join room (valid rooms are 0, 1, 2, 3)", "gray")
+        input.value = '';
       }
       else if (input.value) {
         message = name + ": " + input.value
