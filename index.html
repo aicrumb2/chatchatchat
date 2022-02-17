@@ -136,6 +136,12 @@
         }
         input.value = '';
       }
+      else if (input.value.startsWith("/help")) {
+        addmsg("/help - displays this message", "gray")
+        addmsg("/nick [name] - change name", "gray")
+        addmsg("/me [message] - send action message", "gray")
+        addmsg("/join [room] - join room (valid rooms are 0, 1, 2, 3)", "gray")
+      }
       else if (input.value) {
         message = name + ": " + input.value
         data = {
