@@ -67,11 +67,13 @@
     #mainchat {
       width:100%;
       margin-bottom:auto;
+      margin-top:auto;
     }
   </style>
 </head>
 
 <body>
+  <p id="room">current room: 0</p>
   <div id="mainchat" style="float:top">
   <ul id="messages"></ul>
   </div>
@@ -107,34 +109,42 @@
     }
 
     room = "0";
+    valid_rooms = ["0", "1", "2", "3"]
+    function changeroom(input) {
+      new_room = input.value.replace("/join ", "");
+      if(valid_rooms.includes(new_room)) {
+        room = new_room;
+        addmsg("joined room " + room, "orange");
+      } else {
+        addmsg("not a valid room", "gray")
+      }
+      input.value = '';
+      document.getElementById("room").innerHTML = "current room: " + room;
+    }
+
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (input.value.includes("/nick")) {
         message = "'"+name+"' " + "has changed name to" + " '"+input.value.replace("/nick ", "")+"'"
         socket.emit('chat message', {
           msg: message,
-          room: room
+          room: room,
+          color: "gray" 
         });
         name = input.value.replace("/nick ", "");
         input.value = '';
       }
       else if (input.value.includes("/me")) {
         message = name + " " + input.value.replace("/me", "")
-        socket.emit('orange', {
+        socket.emit('chat message', {
           msg: message,
-          room: room
+          room: room,
+          color: "orange"
         });
         input.value = '';
       }
       else if (input.value.includes("/join")) {
-        new_room = input.value.replace("/join ", "");
-        if(["0", "1", "2", "3"].includes(new_room)) {
-          room = new_room;
-          addmsg("joined room " + room, "orange");
-        } else {
-          addmsg("not a valid room", "gray")
-        }
-        input.value = '';
+        changeroom(input)
       }
       else if (input.value.startsWith("/help")) {
         addmsg("/help - displays this message", "gray")
@@ -160,19 +170,11 @@
       if (data.room==room) {
         var item = document.createElement('li');
         item.textContent = data.msg;
+        item.style = "color:"+data.color
         messages.appendChild(item);
         window.scrollTo(0, document.body.scrollHeight);
       } else {
         console.log(data)
-      }
-    });
-    socket.on('orange', function (data) {
-      if (data.room==room) {
-        var item = document.createElement('li');
-        item.textContent = data.msg;
-        item.style = "color:orange"
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
       }
     });
   </script>
