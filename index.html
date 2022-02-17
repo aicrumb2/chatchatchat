@@ -88,41 +88,85 @@
   <script src="/socket.io/socket.io.js"></script>
   <!--the chat script-->
   <script>
+
+
+
     var socket = io();
     var name = "use /nick [name] to change name";
     var messages = document.getElementById('messages');
     var form = document.getElementById('form');
     var input = document.getElementById('input');
+    
 
+    function addmsg(text, color) {
+      var item = document.createElement('li');
+      item.textContent = text;
+      item.style = "color:"+color
+      messages.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    room = "0";
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (input.value.includes("/nick")) {
-        socket.emit('chat message', "'"+name+"' " + "has changed name to" + " '"+input.value.replace("/nick ", "")+"'")
+        message = "'"+name+"' " + "has changed name to" + " '"+input.value.replace("/nick ", "")+"'"
+        socket.emit('chat message', {
+          msg: message,
+          room: room
+        });
         name = input.value.replace("/nick ", "");
         input.value = '';
       }
       else if (input.value.includes("/me")) {
-        socket.emit('orange', name + " " + input.value.replace("/me", ""));
+        message = name + " " + input.value.replace("/me", "")
+        socket.emit('orange', {
+          msg: message,
+          room: room
+        });
+        input.value = '';
+      }
+      else if (input.value.includes("/join")) {
+        new_room = input.value.replace("/join ", "");
+        if(["0", "1", "2", "3"].includes(new_room)) {
+          room = new_room;
+          addmsg("joined room " + room, "orange");
+        } else {
+          addmsg("not a valid room", "gray")
+        }
         input.value = '';
       }
       else if (input.value) {
-        socket.emit('chat message', name + ": " + input.value);
+        message = name + ": " + input.value
+        data = {
+          msg: message,
+          room: room
+        }
+        // console.log(data)
+        socket.emit('chat message', data);
         input.value = '';
       }
     });
 
-    socket.on('chat message', function (msg) {
-      var item = document.createElement('li');
-      item.textContent = msg;
-      messages.appendChild(item);
-      window.scrollTo(0, document.body.scrollHeight);
+    socket.on('chat message', function (data) {
+      console.log(data)
+      if (data.room==room) {
+        var item = document.createElement('li');
+        item.textContent = data.msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      } else {
+        console.log(data)
+      }
     });
-    socket.on('orange', function (msg) {
-      var item = document.createElement('li');
-      item.textContent = msg;
-      item.style = "color:orange"
-      messages.appendChild(item);
-      window.scrollTo(0, document.body.scrollHeight);
+    socket.on('orange', function (data) {
+      if (data.room==room) {
+        var item = document.createElement('li');
+        item.textContent = data.msg;
+        item.style = "color:orange"
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      }
     });
   </script>
 </body>
