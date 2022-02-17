@@ -108,8 +108,9 @@
       window.scrollTo(0, document.body.scrollHeight);
     }
 
-    room = "0";
-    valid_rooms = ["0", "1", "2", "3"]
+    valid_rooms = ["lobby 1", "lobby 2", "lobby 3"];
+    room = valid_rooms[0]
+    document.getElementById("room").innerHTML = "current room: " + room;
     function changeroom(input) {
       new_room = input.value.replace("/join ", "");
       if(valid_rooms.includes(new_room)) {
@@ -121,7 +122,14 @@
       input.value = '';
       document.getElementById("room").innerHTML = "current room: " + room;
     }
+    function showhelp() {
+      addmsg("/help - displays this message", "gray")
+      addmsg("/nick [name] - change name", "gray")
+      addmsg("/me [message] - send action message", "gray")
+      addmsg("/join [room] - join room (valid rooms are "+valid_rooms+")", "gray")
+    }
 
+    showhelp();
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       if (input.value.includes("/nick")) {
@@ -147,10 +155,7 @@
         changeroom(input)
       }
       else if (input.value.startsWith("/help")) {
-        addmsg("/help - displays this message", "gray")
-        addmsg("/nick [name] - change name", "gray")
-        addmsg("/me [message] - send action message", "gray")
-        addmsg("/join [room] - join room (valid rooms are 0, 1, 2, 3)", "gray")
+        showhelp();
         input.value = '';
       }
       else if (input.value) {
