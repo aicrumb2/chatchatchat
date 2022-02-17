@@ -64,22 +64,28 @@
       background: #292929;
     }
 
-    #mainchat {
+    /* #mainchat {
       width:50%;
-    }
+    } */
   </style>
 </head>
 
 <body>
-  <div id="mainchat">
+  <div id="mainchat" style="float:left">
   <ul id="messages"></ul>
   </div>
+
+  <!-- <div id="game" style="float:right">
+    <canvas id="canvas" width="400" height="400"></canvas>
+  </div> -->
+
   <form id="form" action="">
     <input id="input" autocomplete="off" /><button>Send</button>
   </form>
 
-  <script src="/socket.io/socket.io.js"></script>
 
+  <script src="/socket.io/socket.io.js"></script>
+  <!--the chat script-->
   <script>
     var socket = io();
     var name = "use /nick [name] to change name";

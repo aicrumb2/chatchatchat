@@ -1,7 +1,6 @@
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
-// const fs = require('fs');
 const port = process.env.PORT || 3000;
 
 app.get('/', (req, res) => {
@@ -12,17 +11,20 @@ io.on('connection', (socket) => {
   
   socket.on('chat message', msg => {
     io.emit('chat message', msg);
-//     fs.writeFile('log.txt', "\n"+msg, { flag: 'a+' }, err => {})
   });
 
   socket.on('orange', msg => {
-    io.emit('orange', msg);
-//     fs.writeFile('log.txt', "\n"+msg, { flag: 'a+' }, err => {})
+    io.emit('orange', msg); // i know there's a way to do this with just chat message but idfk how and im lazy
   });
 
   console.log('a user connected');
   socket.on('disconnect', () => {
     console.log('user disconnected');
+  });
+
+  // THE GAME STUFF
+  socket.on('position', (data) => {
+    socket.broadcast.emit('position', data);
   });
 });
 
