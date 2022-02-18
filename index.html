@@ -263,7 +263,7 @@
       clear_canvas();
       draw_all_sprites();
     }
-    function draw_sprite(x, y, src) {
+    function draw_sprite(x, y) {
       ctx.drawImage(sprite, x, y, spritesize, spritesize);
     }
     function draw_all_sprites() {
@@ -282,6 +282,8 @@
       ctx.fillStyle = 'lightblue';
       ctx.fillRect(0, 0, w, h);
     }
+    clear_canvas();
+    
     // listen for positions
     socket.on('position', function (pos) {
       recieve_position(pos);
@@ -309,7 +311,7 @@
       console.log("sent position")
       // draw sprite
       clear_canvas();
-      draw_all_sprites();
+      // draw_all_sprites();
       // ctx.drawImage(sprite, position.x, position.y, spritesize, spritesize);
     });
   </script>
