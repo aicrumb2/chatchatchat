@@ -109,6 +109,11 @@
 
     var socket = io();
     var name = "use /nick [name] to change name";
+    try {
+      name = localStorage.getItem("chatchatchatname");
+    } catch (e) {
+      console.log(e);
+    }
     var messages = document.getElementById('messages');
     var form = document.getElementById('form');
     var input = document.getElementById('input');
@@ -155,6 +160,12 @@
         });
         name = input.value.replace("/nick ", "");
         input.value = '';
+        // save to local Storage
+        try {
+          localStorage.setItem("chatchatchatname", name);
+        } catch (e) {
+          console.log(e);
+        }
       }
       else if (input.value.includes("/me")) {
         message = name + " " + input.value.replace("/me", "")
