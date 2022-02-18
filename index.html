@@ -195,7 +195,25 @@
         input.value = '';
       }
       else if (input.value.includes("/join")) {
-        changeroom(input)
+        room2 = input.value.replace("/join ", "");
+        if (valid_rooms.includes(room2)) {
+          socket.emit('chat message', {
+            msg: name + " joined room " + room2,
+            room: room,
+            color: "cyan"
+          });
+          socket.emit('chat message', {
+            msg: name + " joined room " + room2,
+            room: room2,
+            color: "cyan"
+          });
+          room = room2
+          input.value = '';
+          document.getElementById("room").innerHTML = "current room: " + room;
+        } else {
+          addmsg("not a valid room", "gray")
+          input.value = '';
+        }
       }
       else if (input.value.startsWith("/help")) {
         showhelp();
