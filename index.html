@@ -17,6 +17,7 @@
       /* font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; */
       background: #000000;
       font-family: 'Press Start 2P', cursive;
+      font-size: x-small;
     }
     #form {
       background: rgba(0, 0, 0, 0.15);
@@ -80,13 +81,25 @@
     }
     #room {
       margin-top: -20px;
-      float:top;
+      /* float:top; */
       position: fixed;
     }
+    /* html, body {
+      width:  100%;
+      height: 100%;
+      margin: 0;
+    } */
+    #canvas {
+      margin: 10px
+    }
+
   </style>
 </head>
 
 <body>
+  <center>
+  <canvas id="canvas" height=300></canvas>
+  </center>
   <p id="room">current room: 0</p>
   <div id="mainchat">
   <ul id="messages"></ul>
@@ -104,9 +117,6 @@
   <script src="/socket.io/socket.io.js"></script>
   <!--the chat script-->
   <script>
-
-
-
     var socket = io();
     var name = "use /nick [name] to change name";
     try {
@@ -206,6 +216,101 @@
       } else {
         console.log(data)
       }
+    });
+  </script>
+  <!-- the game script-->
+  <script>
+    // load canvas
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.canvas.width = window.innerHeight;
+    var w = canvas.width;
+    var h = canvas.height;
+    const spritesize=40;
+    // sprite located at sprites/bunny.png
+    var sprite = new Image();
+    var left_facing_sprite = "https://media.discordapp.net/attachments/911104792061968404/944051118277787669/unknown.png"
+    var right_facing_sprite = "https://media.discordapp.net/attachments/911104792061968404/944043952552685629/Untitled583_20220217203326.png"
+    var front_facing_sprite = "https://media.discordapp.net/attachments/911104792061968404/944053479511572530/Untitled583_20220217211118.png"
+    sprite.src = right_facing_sprite;
+    var position = {
+      x: 0,
+      y: 0,
+      src: sprite.src
+    };
+    // randomly generate 4 character id
+    var id = Math.random().toString(36).substring(2, 5);
+    /* send position and listen for position */
+    function send_position() {
+      // send position out to server
+      socket.emit('position', {
+        id: id,
+        x: position.x,
+        y: position.y,
+        src: sprite.src
+      });
+    }
+    var positions = {id: position};
+    function recieve_position(pos) {
+      // get current time
+      var now = new Date().getTime();
+      // push to positions under the id
+      positions[pos.id] = {
+        x: pos.x,
+        y: pos.y,
+        time: now
+      };
+      clear_canvas();
+      draw_all_sprites();
+    }
+    function draw_sprite(x, y, src) {
+      ctx.drawImage(sprite, x, y, spritesize, spritesize);
+    }
+    function draw_all_sprites() {
+      // draw all sprites
+      for (var id in positions) {
+        // if it hasn't been updated in the last 10 seconds, remove it
+        if (new Date().getTime() - positions[id].time > 10000) {
+          delete positions[id];
+        } else {
+          draw_sprite(positions[id].x, positions[id].y);
+        }
+      }
+    }
+    function clear_canvas() {
+      // fill canvas with a light blue color
+      ctx.fillStyle = 'lightblue';
+      ctx.fillRect(0, 0, w, h);
+    }
+    // listen for positions
+    socket.on('position', function (pos) {
+      recieve_position(pos);
+      console.log("got position")
+    });
+    // listen for key presses
+    document.addEventListener('keydown', function (event) {
+      if (event.keyCode == 37) {
+        sprite.src = left_facing_sprite;
+        position.x -= 10;
+      }
+      if (event.keyCode == 39) {
+        sprite.src = right_facing_sprite;
+        position.x += 10;
+      }
+      if (event.keyCode == 38) {
+        sprite.src = front_facing_sprite;
+        position.y -= 10;
+      }
+      if (event.keyCode == 40) {
+        sprite.src = front_facing_sprite;
+        position.y += 10;
+      }
+      send_position();
+      console.log("sent position")
+      // draw sprite
+      clear_canvas();
+      draw_all_sprites();
+      // ctx.drawImage(sprite, position.x, position.y, spritesize, spritesize);
     });
   </script>
 </body>
