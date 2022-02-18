@@ -30,7 +30,11 @@
       height: 3rem;
       box-sizing: border-box;
       backdrop-filter: blur(10px);
-      font-family: 'Press Start 2P', cursive;    
+      font-family: 'Press Start 2P', cursive;   
+      width: 80%;
+      margin: auto;
+      /* border: 3px solid green; */
+      /* padding: 10px; */
     }
 
     #input {
@@ -75,14 +79,16 @@
     }
 
     #mainchat {
-      width:100%;
+      width:80%;
       margin-bottom:auto;
       margin-top:30px;
+      text-align: left;
     }
     #room {
-      margin-top: -20px;
+      /* margin-top: -20px; */
       /* float:top; */
       position: fixed;
+      /* margin: auto; */
     }
     /* html, body {
       width:  100%;
@@ -92,19 +98,20 @@
     #canvas {
       margin: 10px
     }
-
   </style>
 </head>
 
 <body>
   <center>
-  <canvas id="canvas" height=300></canvas>
-  </center>
+  <div id="page" style="height:100%">
   <p id="room">current room: 0</p>
+  <canvas id="canvas" height=300></canvas>
+  
+  
   <div id="mainchat">
   <ul id="messages"></ul>
   </div>
-
+  
   <!-- <div id="game" style="float:right">
     <canvas id="canvas" width="400" height="400"></canvas>
   </div> -->
@@ -112,7 +119,8 @@
   <form id="form" action="">
     <input id="input" autocomplete="off" /><button>SEND</button>
   </form>
-
+  </div>
+  </center>
 
   <script src="/socket.io/socket.io.js"></script>
   <!--the chat script-->
