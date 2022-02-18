@@ -255,7 +255,8 @@
         id: id,
         x: position.x,
         y: position.y,
-        src: sprite.src
+        src: sprite.src,
+        room: room
       });
     }
     var positions = {id: position};
@@ -266,7 +267,8 @@
       positions[pos.id] = {
         x: pos.x,
         y: pos.y,
-        time: now
+        time: now,
+        room: pos.room
       };
       clear_canvas();
       draw_all_sprites();
@@ -277,11 +279,13 @@
     function draw_all_sprites() {
       // draw all sprites
       for (var id in positions) {
-        // if it hasn't been updated in the last 10 seconds, remove it
-        if (new Date().getTime() - positions[id].time > 10000) {
-          delete positions[id];
-        } else {
-          draw_sprite(positions[id].x, positions[id].y);
+        if (positions[id].room==room){
+          // if it hasn't been updated in the last 10 seconds, remove it
+          if (new Date().getTime() - positions[id].time > 10000) {
+            delete positions[id];
+          } else {
+            draw_sprite(positions[id].x, positions[id].y);
+          }
         }
       }
     }
