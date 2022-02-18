@@ -105,7 +105,7 @@
   <center>
   <div id="page" style="height:100%">
   <p id="room">current room: 0</p>
-  <canvas id="canvas" height=300></canvas>
+  <canvas id="canvas" ></canvas>
   
   
   <div id="mainchat">
@@ -231,7 +231,8 @@
     // load canvas
     var canvas = document.getElementById('canvas');
     var ctx = canvas.getContext('2d');
-    ctx.canvas.width = window.innerHeight;
+    ctx.canvas.width = 800;
+    ctx.canvas.height = 320;
     var w = canvas.width;
     var h = canvas.height;
     const spritesize=40;
@@ -319,10 +320,26 @@
         sprite.src = front_facing_sprite;
         position.y += 40;
       }
+      loop_player();
       send_position();
       console.log("sent position")
       // clear_canvas();
     });
+    // function that tests if player is off the screen, and loops them around to the other side
+    function loop_player() {
+      if (position.x < 0) {
+        position.x = w;
+      }
+      if (position.x > w) {
+        position.x = 0;
+      }
+      if (position.y < 0) {
+        position.y = h;
+      }
+      if (position.y > h) {
+        position.y = 0;
+      }
+    }
   </script>
 </body>
 
